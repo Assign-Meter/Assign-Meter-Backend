@@ -62,7 +62,7 @@ router.post(
 
       outputFile = path.resolve(
         "./temp/uploads",
-        `unmapped-result-${Date.now()}.csv`
+        `unmapped-result-${new Date().toISOString().split('T')[0]??""}.csv`
       );
 
       const escapePath = (p) => p.replace(/'/g, "''");
@@ -230,7 +230,7 @@ END AS "Issue Age"
       // Send generated CSV to admin
       res.download(
         outputFile,
-        "unmapped-report.csv",
+        `unmapped-report-${new Date().toISOString().split('T')[0]}.csv`,
         async (error) => {
           try {
             await fs.unlink(outputFile);
