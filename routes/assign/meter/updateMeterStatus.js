@@ -289,7 +289,7 @@ router.post(
                 const plural = info.meters.length > 1 ? "s" : "";
                 return resend.emails
                   .send({
-                    from: "Assign Meter <onboarding@resend.dev>",
+                    from: "Assign Meter <ajoydas@codewithajoydas.in>",
                     to: email,
                     subject: "Meter Status Update — Assign Meter",
                     html: `
