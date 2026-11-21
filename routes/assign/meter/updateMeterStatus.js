@@ -171,7 +171,7 @@ router.post(
           meterNumber: { $in: uniqueData.map((e) => e["Equipment Number"]) },
           pkg: user?.pkg,
         })
-          .sort({ updatedAt: -1 })
+          .sort({ createdAt: -1 })
           .populate("supervisor");
         const existingMeterNumbers = new Set(
           checkMeterExistenceInDB.map((m) => m.meterNumber),
