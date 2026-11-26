@@ -56,12 +56,10 @@ router.post(
       const user = req?.user;
       const pkg = user.pkg;
       try {
-        
         const file = req.file;
         if (!file) {
           return res.status(400).json({ error: "No file uploaded" });
         }
-        
         let workbook;
         try {
           workbook = XLSX.read(file.buffer, { type: "buffer" });
@@ -100,7 +98,6 @@ router.post(
             .status(400)
             .json({ error: `Missing headers: ${missingHeaders.join(", ")}` });
         }
-        
         const rawRows = XLSX.utils.sheet_to_json(sheet);
         const data = rawRows.map((row) => {
           const canonicalRow = {};
@@ -110,7 +107,6 @@ router.post(
           }
           return canonicalRow;
         });
-        
         const getUniqueEntries = (rows) => {
           const uniqueEntries = [];
           const invalidStatusRows = [];
@@ -141,7 +137,7 @@ router.post(
                 ...entry,
                 "Equipment Number": meterNumber,
                 "Field Engineer": engineer,
-                Status: normalizedStatus, 
+                Status: normalizedStatus,
               });
             }
           });
@@ -166,7 +162,6 @@ router.post(
             invalidStatusRows,
           });
         }
-        
         const checkMeterExistenceInDB = await MeterDB.find({
           meterNumber: { $in: uniqueData.map((e) => e["Equipment Number"]) },
           pkg: user?.pkg,
@@ -179,12 +174,6 @@ router.post(
         const nonExistingMeters = uniqueData.filter(
           (entry) => !existingMeterNumbers.has(entry["Equipment Number"]),
         );
-        
-        
-        
-        
-        
-        
         const operations = uniqueData.flatMap((entry) => [
           {
             updateOne: {
@@ -208,7 +197,7 @@ router.post(
               },
               update: {
                 $set: {
-                  status: "rejected", 
+                  status: "rejected",
                   remarks: `Meter has been assigned to ${entry["Field Engineer"]}.`,
                 },
               },
@@ -217,11 +206,6 @@ router.post(
         ]);
         let result;
         try {
-          
-          
-          
-          
-          
           result = await MeterDB.bulkWrite(operations, { runValidators: true });
         } catch (dbErr) {
           console.error("[meter-status] bulkWrite failed:", dbErr.message);
@@ -229,9 +213,6 @@ router.post(
             .status(500)
             .json({ error: "Failed to update meter records" });
         }
-        
-        
-        
         res.json({
           message: "File processed successfully",
           data: uniqueData,
@@ -239,7 +220,6 @@ router.post(
           nonExistingMeters,
           invalidStatusRows,
         });
-        
         setImmediate(async () => {
           try {
             const statusByMeterNumber = new Map(
@@ -328,8 +308,6 @@ router.post(
               );
             }
           } catch (notifyErr) {
-            
-            
             console.error(
               "[meter-status] Unexpected error while sending supervisor notifications:",
               notifyErr,

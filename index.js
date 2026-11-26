@@ -7,7 +7,7 @@ const path = require("path");
 const __dir = path.resolve();
 app.use(cookieParser());
 app.use(express.static(path.join(__dir, "public")));
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 connectToMongo();
 const cors = require("cors");
@@ -18,6 +18,7 @@ app.use(express.json());
 const allowedOrigins = [
   "https://assign-meter-web.vercel.app",
   "http://localhost:3000",
+  "https://assignmeter.codewithajoydas.in",
 ];
 
 app.use(
@@ -69,8 +70,8 @@ app.use(
 ); // rbac added
 app.use(
   "/api/last-unmapped-report",
-  require("./routes/reports/get_last_unmapp_report"), 
-);// rbac added
+  require("./routes/reports/get_last_unmapp_report"),
+); // rbac added
 app.use("/events", require("./routes/sse/sse"));
 app.use("/api/bledevices", require("./routes/others/bleDevices"));
 app.use(
@@ -78,13 +79,15 @@ app.use(
   require("./routes/reports/generate_unmapped_report_for_supervisor"),
 ); // no need rbac
 
-app.use("/api/pivottabls/getallinstallername", require("./routes/reports/generate_pivot_table"));
+app.use(
+  "/api/pivottabls/getallinstallername",
+  require("./routes/reports/generate_pivot_table"),
+);
 
-
-// others 
+// others
 app.use("/api/migration", require("./routes/others/dbmigration"));
 
-app.use("/api/push",require("./routes/notification/web-push"));
+app.use("/api/push", require("./routes/notification/web-push"));
 
 const port = process.env.PORT;
 app.listen(port, () => {
